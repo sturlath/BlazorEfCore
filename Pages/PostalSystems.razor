@@ -1,0 +1,73 @@
+﻿@page "/postalsystems"
+
+@using BlazorApp.Data
+@using Entities
+
+@inject IPostalSystemService PostalSystemService
+
+<h3>PostalSystems</h3>
+
+
+@if (postalSystem == null)
+{
+    <p><em>loading...</em></p>
+}
+else
+{
+    <EditForm Model="@postalSystem" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <InputText id="name" @bind-Value="postalSystem.Name" placeholder="Nafn sendanda" />
+
+        <button type="submit">Add</button>
+    </EditForm>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nafn</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (postalSystems != null && postalSystems != null)
+            {
+
+
+                @foreach (var postalsystem in postalSystems)
+                {
+                    <tr>
+                        <td>@postalsystem.Name</td>
+
+                    </tr>
+                }
+            }
+            else
+            {
+                <p><em>No data</em></p>
+            }
+        </tbody>
+    </table>
+}
+
+
+
+@code {
+
+    private PostalSystem postalSystem = new PostalSystem();
+    private List<PostalSystem> postalSystems;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        postalSystems = await PostalSystemService.Get();
+    }
+
+    protected async Task HandleValidSubmit()
+    {
+        await PostalSystemService.Add(postalSystem);
+        postalSystems = await PostalSystemService.Get();
+    }
+
+}

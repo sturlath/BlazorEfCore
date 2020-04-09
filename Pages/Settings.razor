@@ -1,0 +1,91 @@
+﻿@page "/settings"
+
+@using BlazorApp.Data
+@using Entities
+
+@inject ISettingsService SettingsService
+@inject IPostalSystemService PostalSystem
+
+<h3>Settings</h3>
+
+
+@if (mySettings == null)
+{
+    <p><em>loading...</em></p>
+}
+else
+{
+    <EditForm Model="@mySettingsEdit" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <InputText id="name" @bind-Value="mySettingsEdit.CompanyName" placeholder="Nafn fyrirtækis" />
+
+        <InputSelect @bind-Value="selectedPostalSystem.PostalSystemId">
+            @foreach (var system in postalSystems)
+                {
+                <option value="@system.PostalSystemId">@system.Name</option>
+                }
+        </InputSelect>
+
+        <button type="submit">Add</button>
+    </EditForm>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>CompanyName</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var settings in mySettings)
+            {
+                <tr>
+                    <td>@settings.CompanyName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private PostalSystem selectedPostalSystem = new PostalSystem();
+    private List<PostalSystem> postalSystems = new List<PostalSystem>();
+
+    private MySettings mySettingsEdit = new MySettings();
+    private List<MySettings> mySettings = new List<MySettings>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await PostalSystem.Get();
+
+        foreach (var item in result)
+        {
+            postalSystems.Add(item);
+        }
+
+        mySettings = await SettingsService.Get();
+    }
+
+    protected async Task HandleValidSubmit()
+    {
+        try
+        {
+            var postal = await PostalSystem.Get();
+
+
+            mySettingsEdit.PostalSystem = postal.FirstOrDefault();
+
+            await SettingsService.Add(mySettingsEdit);
+        }
+        catch (Exception ex)
+        {
+            // The error:
+            // "The instance of entity type 'PostalSystem' cannot be tracked because another instance with the key value '{PostalSystemId: 1}' is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached."
+
+            throw ex;
+        }
+    }
+
+}
