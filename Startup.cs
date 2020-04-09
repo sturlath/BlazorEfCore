@@ -30,8 +30,8 @@ namespace BlazorEfCore
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            services.AddTransient<ISettingsService, SettingsService>();
-            services.AddTransient<IPostalSystemService, PostalSystemService>();
+            services.AddScoped<ISettingsService, SettingsService>();
+            services.AddScoped<IPostalSystemService, PostalSystemService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

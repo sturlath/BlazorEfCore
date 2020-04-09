@@ -40,16 +40,12 @@ namespace BlazorApp.Data
         {
             try
             {
-                //_context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-
                 _context.Settings.Add(toDo);
                 await _context.SaveChangesAsync();
                 return toDo;
             }
             catch (Exception ex)
             {
-                // The error:
-                // "The instance of entity type 'PostalSystem' cannot be tracked because another instance with the key value '{PostalSystemId: 1}' is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached."
                 throw;
             }
         }

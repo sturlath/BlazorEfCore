@@ -75,15 +75,12 @@ else
             var postal = await PostalSystem.Get();
 
 
-            mySettingsEdit.PostalSystem = postal.FirstOrDefault();
+            mySettingsEdit.PostalSystemId = postal.FirstOrDefault().PostalSystemId;
 
             await SettingsService.Add(mySettingsEdit);
         }
         catch (Exception ex)
         {
-            // The error:
-            // "The instance of entity type 'PostalSystem' cannot be tracked because another instance with the key value '{PostalSystemId: 1}' is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached."
-
             throw ex;
         }
     }
